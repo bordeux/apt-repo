@@ -13,13 +13,6 @@ on:
         type: boolean
         default: false
 
-  push:
-    branches:
-      - main
-      - master
-    paths:
-      - 'projects.yaml'
-
 permissions:
   contents: write
   pages: write
