@@ -1,0 +1,25 @@
+# APT Repository Generator - Project Configuration
+#
+# Define GitHub repositories that release .deb packages.
+# The generator will fetch releases and build an APT repository.
+
+# Repository settings
+settings:
+  # Codename for the repository (used in apt sources)
+  codename: stable
+  # Components (default: main)
+  components:
+    - main
+  # Architectures to support
+  architectures:
+    - amd64
+    - arm64
+  # Repository label
+  label: "Bordeux Packages"
+  # Repository origin
+  origin: "bordeux"
+
+# Projects to include in the repository
+projects:
+  - repo: bordeux/tmpltool
+    keep_versions: 1

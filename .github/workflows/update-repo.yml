@@ -1,0 +1,95 @@
+name: Update APT Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Specific project to update (leave empty for all)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Dry run (do not publish)'
+        required: false
+        type: boolean
+        default: false
+
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'projects.yaml'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Import GPG key
+        if: ${{ vars.GPG_PRIVATE_KEY != '' }}
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Generate APT repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARGS="--output repo"
+
+          if [ -n "${{ github.event.inputs.project }}" ]; then
+            ARGS="$ARGS --project '${{ github.event.inputs.project }}'"
+          fi
+
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+
+          if [ -n "${{ vars.GPG_KEY_ID }}" ]; then
+            ARGS="$ARGS --gpg-key '${{ vars.GPG_KEY_ID }}'"
+          else
+            ARGS="$ARGS --no-sign"
+          fi
+
+          eval python scripts/generate_repo.py $ARGS
+
+      - name: List generated files
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "Generated repository structure:"
+          find repo -type f | head -50
+
+      - name: Upload artifact
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
+
+  deploy:
+    if: ${{ github.event.inputs.dry_run != 'true' }}
+    needs: generate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
