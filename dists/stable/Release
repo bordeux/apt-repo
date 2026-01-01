@@ -1,0 +1,23 @@
+Origin: bordeux
+Label: Bordeux Packages
+Suite: stable
+Codename: stable
+Date: Thu, 01 Jan 2026 22:19:24 UTC
+Architectures: amd64 arm64
+Components: main
+Description: APT repository generated from GitHub releases
+MD5Sum:
+ 5df1b5c539b4a6143dc48dd03ed5c595      615 main/binary-amd64/Packages
+ bd1416108ff9d413ffedcf92fb07dd2a      463 main/binary-amd64/Packages.gz
+ ef7d6d4e603d7ddf53c980b08b09ed0b      615 main/binary-arm64/Packages
+ 871ea6589535f037fef1e0b931a6a95f      461 main/binary-arm64/Packages.gz
+SHA256:
+ 8369b6ca5c970b666b0d45aaa9fc792265bade72b32b9b9e005634d60b868e49      615 main/binary-amd64/Packages
+ ce6b2f8633d23581e8ec66568313a2bef7a0990c924d772619c036634b5c8c9c      463 main/binary-amd64/Packages.gz
+ f7a8f232483e7f701a5239904c41a25c7c1d6c82b58d08ede1c3c8398d60d5cd      615 main/binary-arm64/Packages
+ 110dd33f9fba69de1954b6fed2037ce421d2e7ef2fd1edf5f9f028c457b1e5e3      461 main/binary-arm64/Packages.gz
+SHA512:
+ 733cdf982afa6c0aac826539ecf4b800c73bd3bf9d38f4c0520f01cac44c6cd657305f2872ae5c2932ebc7a5d888ba35dbc6bb565ebabd41baf62a32f2d94af1      615 main/binary-amd64/Packages
+ 0674f55980580dc24b0947a4b339cf1c3e71a1b5e14b8d088996900032704e80daf2372fd7124fc112ca8130299761eb7445e5ee3f4092a5c7d4dbd791c63ab8      463 main/binary-amd64/Packages.gz
+ b258be8d12ccfa1eaca99a442953089af767e2a7e94f6ccd8ae3096b08e0c9644d34b7b795a853d9cb6e11745b1ecd0ce8e56e9850c485b0b4d95f51c336669b      615 main/binary-arm64/Packages
+ c9e288e72aed2a15a5474fdcf4c704899bf90dcb6c6d876e609305bf3d1febcd36a0bc7f16a293496301f0644470c4a502a5aa9a1f070618d82e4009d7a96528      461 main/binary-arm64/Packages.gz

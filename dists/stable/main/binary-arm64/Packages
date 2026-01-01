@@ -1,0 +1,15 @@
+Package: tmpltool
+Version: 1.2.2
+Architecture: arm64
+Maintainer: Chris Bednarczyk <tmpltool@bordeux.net>
+Installed-Size: 1805
+Depends: libc6
+Filename: pool/main/tmpltool_1.2.2_arm64.deb
+Size: 1849340
+MD5sum: 6ac3a7bef91accd88f91707c6649a72f
+SHA256: 260973f99c36f4bc3b92b2f51d6aa337f1111fc9e83dc31a9bbd732fa35fbf02
+SHA512: 183768404df50da19aaf34af2efa9871645ce37092fbec8b6965536fd754d6c38c2d25890915f86b07fb2d8a25d51f29eb8dadc57681b2a564fdb11f4d05f204
+Section: utils
+Priority: optional
+Homepage: https://github.com/bordeux/tmpltool
+Description: A fast and simple command-line template rendering tool using MiniJinja
