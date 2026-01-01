@@ -1,0 +1,41 @@
+{
+  "packages": [
+    {
+      "name": "tmpltool",
+      "version": "1.2.2",
+      "architecture": "amd64",
+      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.2.2/tmpltool_1.2.2_amd64.deb",
+      "filename": "tmpltool_1.2.2_amd64.deb",
+      "project_repo": "bordeux/tmpltool",
+      "size": 1833392,
+      "sha256": "36800fb60f5ff709d50adff918cb4da8f2cb1e173b1c37c03d1117bcd015c762",
+      "sha512": "af2defadcdd9b78f87cc2fa85339df0916fd8c053cb241f3e3f47a44f997905ad9c9e096cb10b064a6ea807e05d7b89b2b238b9956a78961cbba99711a60ef11",
+      "md5": "91662e549f7a40137c5112da6748affe",
+      "description": "A fast and simple command-line template rendering tool using MiniJinja",
+      "maintainer": "Chris Bednarczyk <tmpltool@bordeux.net>",
+      "depends": "libc6",
+      "section": "utils",
+      "priority": "optional",
+      "homepage": "https://github.com/bordeux/tmpltool"
+    },
+    {
+      "name": "tmpltool",
+      "version": "1.2.2",
+      "architecture": "arm64",
+      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.2.2/tmpltool_1.2.2_arm64.deb",
+      "filename": "tmpltool_1.2.2_arm64.deb",
+      "project_repo": "bordeux/tmpltool",
+      "size": 1849340,
+      "sha256": "260973f99c36f4bc3b92b2f51d6aa337f1111fc9e83dc31a9bbd732fa35fbf02",
+      "sha512": "183768404df50da19aaf34af2efa9871645ce37092fbec8b6965536fd754d6c38c2d25890915f86b07fb2d8a25d51f29eb8dadc57681b2a564fdb11f4d05f204",
+      "md5": "6ac3a7bef91accd88f91707c6649a72f",
+      "description": "A fast and simple command-line template rendering tool using MiniJinja",
+      "maintainer": "Chris Bednarczyk <tmpltool@bordeux.net>",
+      "depends": "libc6",
+      "section": "utils",
+      "priority": "optional",
+      "homepage": "https://github.com/bordeux/tmpltool"
+    }
+  ],
+  "updated": "2026-01-01T22:19:24.009802+00:00"
+}
