@@ -23,11 +23,8 @@ settings:
     - arm64
 
 projects:
-  - repo: cli/cli           # GitHub CLI
+  - repo: bordeux/tmpltool
     keep_versions: 1        # Keep 1 previous version
-
-  - repo: jesseduffield/lazygit
-    keep_versions: 0        # Only latest version
 ```
 
 ### 2. Enable GitHub Pages
@@ -62,7 +59,7 @@ echo "deb [signed-by=/etc/apt/keyrings/bordeux.gpg] https://bordeux.github.io/ap
 
 # Update and install
 sudo apt update
-sudo apt install PACKAGE_NAME
+sudo apt install tmpltool
 ```
 
 For unsigned repositories, omit the `signed-by` option:
@@ -83,14 +80,14 @@ settings:
   architectures:                # Supported architectures
     - amd64
     - arm64
-  label: "My Packages"          # Repository label
-  origin: "my-apt-repo"         # Repository origin
+  label: "Bordeux Packages"     # Repository label
+  origin: "bordeux"             # Repository origin
 
 projects:
-  - repo: owner/repo            # GitHub repository (required)
-    name: package-name          # Package name override (default: repo name)
+  - repo: bordeux/tmpltool      # GitHub repository (required)
+    name: tmpltool              # Package name override (default: repo name)
     description: "Description"  # Description override
-    keep_versions: 2            # Past versions to keep (default: 0)
+    keep_versions: 1            # Past versions to keep (default: 0)
     asset_pattern: ".*amd64.*"  # Regex to filter .deb assets
 ```
 
@@ -106,7 +103,7 @@ pip install -r requirements.txt
 python scripts/generate_repo.py --output repo
 
 # Process specific project
-python scripts/generate_repo.py --project cli/cli
+python scripts/generate_repo.py --project bordeux/tmpltool
 
 # Dry run (no downloads)
 python scripts/generate_repo.py --dry-run
