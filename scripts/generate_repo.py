@@ -4,6 +4,8 @@ APT Repository Generator
 
 Generates an APT repository from GitHub releases containing .deb packages.
 Similar to homebrew-tap but for Debian-based systems.
+
+Supports incremental updates - can update a single project while preserving others.
 """
 
 import argparse
@@ -15,7 +17,7 @@ import re
 import shutil
 import subprocess
 import tempfile
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -33,6 +35,9 @@ ARCH_PATTERNS = {
     "armhf": [r"armhf", r"armv7"],
 }
 
+# Manifest file to track packages by project
+MANIFEST_FILE = "packages.json"
+
 
 @dataclass
 class DebPackage:
@@ -42,6 +47,7 @@ class DebPackage:
     architecture: str
     url: str
     filename: str
+    project_repo: str = ""  # Track which project this belongs to
     size: int = 0
     sha256: str = ""
     sha512: str = ""
@@ -337,6 +343,7 @@ def fetch_releases(
                     url=asset["url"],
                     filename=asset["name"],
                     size=asset["size"],
+                    project_repo=project.repo,
                     description=project.description or f"{project.name} from GitHub",
                     homepage=f"https://github.com/{project.repo}",
                 )
@@ -345,6 +352,26 @@ def fetch_releases(
             releases.append(release)
 
     return releases
+
+
+def load_manifest(output_dir: Path) -> dict[str, list[dict]]:
+    """Load existing packages manifest."""
+    manifest_path = output_dir / MANIFEST_FILE
+    if manifest_path.exists():
+        with open(manifest_path) as f:
+            return json.load(f)
+    return {"packages": []}
+
+
+def save_manifest(output_dir: Path, packages: list[DebPackage]) -> None:
+    """Save packages manifest."""
+    manifest_path = output_dir / MANIFEST_FILE
+    data = {
+        "packages": [asdict(pkg) for pkg in packages],
+        "updated": datetime.now(timezone.utc).isoformat(),
+    }
+    with open(manifest_path, "w") as f:
+        json.dump(data, f, indent=2)
 
 
 def generate_packages_file(packages: list[DebPackage], pool_prefix: str) -> str:
@@ -370,7 +397,7 @@ Description: {pkg.description}
 """
         entries.append(entry.strip())
 
-    return "\n\n".join(entries) + "\n"
+    return "\n\n".join(entries) + "\n" if entries else ""
 
 
 def generate_release_file(
@@ -476,6 +503,23 @@ def load_config(config_path: Path) -> tuple[RepoSettings, list[Project]]:
     return settings, projects
 
 
+def cleanup_old_packages(
+    pool_dir: Path,
+    all_packages: list[DebPackage],
+) -> list[Path]:
+    """Remove .deb files that are no longer in the manifest."""
+    removed = []
+    current_filenames = {pkg.filename for pkg in all_packages}
+
+    if pool_dir.exists():
+        for deb_file in pool_dir.glob("*.deb"):
+            if deb_file.name not in current_filenames:
+                deb_file.unlink()
+                removed.append(deb_file)
+
+    return removed
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate APT repository from GitHub releases"
@@ -490,7 +534,7 @@ def main():
         "--output", "-o",
         type=Path,
         default=Path("repo"),
-        help="Output directory for repository",
+        help="Output directory for repository (usually gh-pages checkout)",
     )
     parser.add_argument(
         "--project", "-p",
@@ -521,42 +565,57 @@ def main():
     args = parser.parse_args()
 
     # Load configuration
-    settings, projects = load_config(args.config)
+    settings, all_projects = load_config(args.config)
 
     # List mode
     if args.list:
         print("Configured projects:")
-        for proj in projects:
+        for proj in all_projects:
             print(f"  - {proj.repo} (name: {proj.name}, keep_versions: {proj.keep_versions})")
         return
 
-    # Filter to specific project if requested
+    # Determine which projects to process
     if args.project:
-        projects = [
-            p for p in projects
+        projects_to_process = [
+            p for p in all_projects
             if p.name == args.project or p.repo == args.project
         ]
-        if not projects:
+        if not projects_to_process:
             print(f"Error: Project '{args.project}' not found in config")
             return 1
+    else:
+        projects_to_process = all_projects
 
     # Initialize GitHub API client
     github = GitHubAPI()
 
-    # Collect all packages
-    all_packages: dict[str, list[DebPackage]] = {}  # arch -> packages
-    for arch in settings.architectures:
-        all_packages[arch] = []
-
     output_dir = args.output
     pool_dir = output_dir / "pool" / "main"
+
+    # Load existing manifest (for incremental updates)
+    manifest = load_manifest(output_dir)
+    existing_packages = [
+        DebPackage(**pkg_data) for pkg_data in manifest.get("packages", [])
+    ]
+
+    # Filter out packages from projects we're about to update
+    projects_to_update = {p.repo for p in projects_to_process}
+    preserved_packages = [
+        pkg for pkg in existing_packages
+        if pkg.project_repo not in projects_to_update
+    ]
 
     if not args.dry_run:
         pool_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"Processing {len(projects)} project(s)...")
+    print(f"Processing {len(projects_to_process)} project(s)...")
+    if preserved_packages:
+        print(f"Preserving {len(preserved_packages)} package(s) from other projects")
 
-    for project in projects:
+    # Collect new packages
+    new_packages: list[DebPackage] = []
+
+    for project in projects_to_process:
         print(f"\n{'='*60}")
         print(f"Project: {project.repo}")
         print(f"{'='*60}")
@@ -600,7 +659,7 @@ def main():
                         pkg.priority = control.get("priority", pkg.priority)
                         pkg.homepage = control.get("homepage", pkg.homepage)
 
-                    all_packages[pkg.architecture].append(pkg)
+                    new_packages.append(pkg)
 
         except Exception as e:
             print(f"  Error processing {project.repo}: {e}")
@@ -610,9 +669,27 @@ def main():
         print("\n[Dry run - no files written]")
         return
 
+    # Combine preserved and new packages
+    all_packages = preserved_packages + new_packages
+
+    # Clean up old .deb files no longer needed
+    removed = cleanup_old_packages(pool_dir, all_packages)
+    if removed:
+        print(f"\nRemoved {len(removed)} old package(s)")
+
+    # Save manifest
+    save_manifest(output_dir, all_packages)
+
     print(f"\n{'='*60}")
     print("Generating repository metadata...")
     print(f"{'='*60}")
+
+    # Group packages by architecture
+    packages_by_arch: dict[str, list[DebPackage]] = {}
+    for arch in settings.architectures:
+        packages_by_arch[arch] = [
+            pkg for pkg in all_packages if pkg.architecture == arch
+        ]
 
     # Create dists structure
     dist_dir = output_dir / "dists" / settings.codename
@@ -623,7 +700,7 @@ def main():
             arch_dir = dist_dir / component / f"binary-{arch}"
             arch_dir.mkdir(parents=True, exist_ok=True)
 
-            packages = all_packages.get(arch, [])
+            packages = packages_by_arch.get(arch, [])
             packages_content = generate_packages_file(packages, f"pool/{component}")
 
             # Write Packages file
@@ -663,8 +740,7 @@ def main():
             print(f"  Skipped signing (GPG not available or no key)")
 
     print(f"\nRepository generated in: {output_dir}")
-    print(f"\nTo use this repository, add to /etc/apt/sources.list.d/:")
-    print(f"  deb [signed-by=/path/to/key.gpg] https://YOUR_URL {settings.codename} {' '.join(settings.components)}")
+    print(f"Total packages: {len(all_packages)}")
 
 
 if __name__ == "__main__":

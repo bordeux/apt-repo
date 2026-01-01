@@ -8,34 +8,57 @@ on:
         required: false
         type: string
       dry_run:
-        description: 'Dry run (do not publish)'
+        description: 'Dry run (do not create PR)'
         required: false
         type: boolean
         default: false
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
+  pull-requests: write
 
 jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout main branch
         uses: actions/checkout@v4
+        with:
+          path: main
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+        continue-on-error: true
+
+      - name: Initialize gh-pages if not exists
+        run: |
+          if [ ! -d "gh-pages/.git" ]; then
+            mkdir -p gh-pages
+            cd gh-pages
+            git init
+            git checkout -b gh-pages
+            echo "# APT Repository" > README.md
+            git add README.md
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "Initialize gh-pages branch"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
+          cache-dependency-path: main/requirements.txt
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r main/requirements.txt
 
       - name: Import GPG key
-        if: ${{ vars.GPG_PRIVATE_KEY != '' }}
+        if: ${{ vars.GPG_KEY_ID != '' }}
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
         env:
@@ -45,7 +68,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ARGS="--output repo"
+          cd main
+          ARGS="--config projects.yaml --output ../gh-pages"
 
           if [ -n "${{ github.event.inputs.project }}" ]; then
             ARGS="$ARGS --project '${{ github.event.inputs.project }}'"
@@ -63,26 +87,88 @@ jobs:
 
           eval python scripts/generate_repo.py $ARGS
 
-      - name: List generated files
+      - name: Check for changes
         if: ${{ github.event.inputs.dry_run != 'true' }}
+        id: changes
         run: |
-          echo "Generated repository structure:"
-          find repo -type f | head -50
+          cd gh-pages
+          git add -A
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git diff --cached --name-only
+          fi
 
-      - name: Upload artifact
-        if: ${{ github.event.inputs.dry_run != 'true' }}
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: repo
+      - name: Create Pull Request
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.changes.outputs.has_changes == 'true' }}
+        run: |
+          cd gh-pages
 
-  deploy:
-    if: ${{ github.event.inputs.dry_run != 'true' }}
-    needs: generate
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create unique branch name
+          BRANCH_NAME="update-repo/${{ github.run_id }}"
+          git checkout -b "$BRANCH_NAME"
+
+          # Commit changes
+          if [ -n "${{ github.event.inputs.project }}" ]; then
+            COMMIT_MSG="chore: update ${{ github.event.inputs.project }} packages"
+          else
+            COMMIT_MSG="chore: update all packages"
+          fi
+
+          git commit -m "$COMMIT_MSG"
+
+          # Push branch
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push -u origin "$BRANCH_NAME"
+
+          # Create PR
+          cd ../main
+          if [ -n "${{ github.event.inputs.project }}" ]; then
+            PR_TITLE="Update APT packages: ${{ github.event.inputs.project }}"
+          else
+            PR_TITLE="Update APT packages: all projects"
+          fi
+
+          gh pr create \
+            --base gh-pages \
+            --head "$BRANCH_NAME" \
+            --title "$PR_TITLE" \
+            --body "$(cat <<'EOF'
+          ## Summary
+
+          Automated update of APT repository packages.
+
+          **Triggered by:** ${{ github.actor }}
+          **Run ID:** ${{ github.run_id }}
+
+          ## Changes
+
+          $(cd ../gh-pages && git diff --cached --name-only HEAD~1 2>/dev/null || echo "New repository initialization")
+
+          ---
+
+          🤖 Generated by GitHub Actions
+          EOF
+          )"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "## Dry Run Complete" >> $GITHUB_STEP_SUMMARY
+            echo "No changes were made." >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.changes.outputs.has_changes }}" = "true" ]; then
+            echo "## PR Created" >> $GITHUB_STEP_SUMMARY
+            echo "A pull request has been created to update the APT repository." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## No Changes" >> $GITHUB_STEP_SUMMARY
+            echo "No package updates were needed." >> $GITHUB_STEP_SUMMARY
+          fi
