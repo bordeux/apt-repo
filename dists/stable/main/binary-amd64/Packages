@@ -1,14 +1,14 @@
 Package: tmpltool
-Version: 1.2.2
+Version: 1.2.3
 Architecture: amd64
 Maintainer: Chris Bednarczyk <tmpltool@bordeux.net>
-Installed-Size: 1790
+Installed-Size: 1797
 Depends: libc6
-Filename: pool/main/tmpltool_1.2.2_amd64.deb
-Size: 1833392
-MD5sum: 91662e549f7a40137c5112da6748affe
-SHA256: 36800fb60f5ff709d50adff918cb4da8f2cb1e173b1c37c03d1117bcd015c762
-SHA512: af2defadcdd9b78f87cc2fa85339df0916fd8c053cb241f3e3f47a44f997905ad9c9e096cb10b064a6ea807e05d7b89b2b238b9956a78961cbba99711a60ef11
+Filename: pool/main/tmpltool_1.2.3_amd64.deb
+Size: 1840680
+MD5sum: e9f9983246e01184f5ad43b3f882ad03
+SHA256: 46d7ef7f21a99a1df1edbf417c07396b7e6e125f3a3713488ee6b64a1664ccc4
+SHA512: 77445f3dff536bfcaeb62a343093c0177c5d044669ffe6345ccaacd6ed575cd226c4a8ea5900bd9ef37f2600b37d74f9e7edf29e2d933e28ef747c9c270937a7
 Section: utils
 Priority: optional
 Homepage: https://github.com/bordeux/tmpltool
