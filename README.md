@@ -1,5 +1,7 @@
 # APT Repository Generator
 
+[![Update APT Repository](https://github.com/bordeux/apt-repo/actions/workflows/update-repo.yml/badge.svg)](https://github.com/bordeux/apt-repo/actions/workflows/update-repo.yml)
+
 Generate an APT repository from GitHub releases containing `.deb` packages. Host your own Debian/Ubuntu package repository on GitHub Pages.
 
 ## How It Works
