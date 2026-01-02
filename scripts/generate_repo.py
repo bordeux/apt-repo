@@ -290,6 +290,15 @@ def fetch_releases(
     """Fetch and process releases for a project."""
     releases_data = github.get_releases(project.repo)
 
+    # Fetch description from GitHub if not provided
+    description = project.description
+    if not description:
+        try:
+            repo_info = github.get_repo(project.repo)
+            description = repo_info.get("description") or f"{project.name} from GitHub"
+        except Exception:
+            description = f"{project.name} from GitHub"
+
     # Group releases by major.minor version
     releases_by_minor: dict[str, dict] = {}
 
@@ -344,7 +353,7 @@ def fetch_releases(
                     filename=asset["name"],
                     size=asset["size"],
                     project_repo=project.repo,
-                    description=project.description or f"{project.name} from GitHub",
+                    description=description,
                     homepage=f"https://github.com/{project.repo}",
                 )
                 release.packages.append(package)
