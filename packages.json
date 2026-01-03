@@ -2,6 +2,42 @@
   "packages": [
     {
       "name": "tmpltool",
+      "version": "1.3.0",
+      "architecture": "amd64",
+      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.3.0/tmpltool_1.3.0_amd64.deb",
+      "filename": "tmpltool_1.3.0_amd64.deb",
+      "project_repo": "bordeux/tmpltool",
+      "size": 1857328,
+      "sha256": "99349d6d458a5b23a775ea933aa22aec2fd7e9858b4be023a45ecfb321497afa",
+      "sha512": "252478203219a70946be5617b1ac73fc0e7749f566a68b6ee949d9d81f7af88e03b2d84f9e93eac21a48dc3e56f844d197c31d3fc5389da259dd14dabfad2e52",
+      "md5": "68587c54f21343aebe327edd75f640ae",
+      "description": "A fast and simple command-line template rendering tool using MiniJinja",
+      "maintainer": "Chris Bednarczyk <tmpltool@bordeux.net>",
+      "depends": "libc6",
+      "section": "utils",
+      "priority": "optional",
+      "homepage": "https://github.com/bordeux/tmpltool"
+    },
+    {
+      "name": "tmpltool",
+      "version": "1.3.0",
+      "architecture": "arm64",
+      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.3.0/tmpltool_1.3.0_arm64.deb",
+      "filename": "tmpltool_1.3.0_arm64.deb",
+      "project_repo": "bordeux/tmpltool",
+      "size": 1891072,
+      "sha256": "20785e2edd482fd59525c308e34f2dc2e123f66c3d16647ecea6d870603b45d5",
+      "sha512": "6b1ea1cd942c38aa3d686f98f8daa580e5f1b4d93625d186c89075f93455430e8d54c3da2ba6a5dc6cdcdbe6a45ddaf458167fc72b5c5a095a1b3d04ec492a83",
+      "md5": "108934e0ee3ecd1b5378d957767eb5e6",
+      "description": "A fast and simple command-line template rendering tool using MiniJinja",
+      "maintainer": "Chris Bednarczyk <tmpltool@bordeux.net>",
+      "depends": "libc6",
+      "section": "utils",
+      "priority": "optional",
+      "homepage": "https://github.com/bordeux/tmpltool"
+    },
+    {
+      "name": "tmpltool",
       "version": "1.2.5",
       "architecture": "amd64",
       "url": "https://github.com/bordeux/tmpltool/releases/download/v1.2.5/tmpltool_1.2.5_amd64.deb",
@@ -37,5 +73,5 @@
       "homepage": "https://github.com/bordeux/tmpltool"
     }
   ],
-  "updated": "2026-01-02T08:35:57.373690+00:00"
+  "updated": "2026-01-03T21:37:37.400436+00:00"
 }
