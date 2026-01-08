@@ -1,14 +1,14 @@
 Package: tmpltool
-Version: 1.4.2
+Version: 1.4.3
 Architecture: arm64
 Maintainer: Chris Bednarczyk <tmpltool@bordeux.net>
-Installed-Size: 1888
+Installed-Size: 1450
 Depends: libc6
-Filename: pool/main/tmpltool_1.4.2_arm64.deb
-Size: 1933540
-MD5sum: bb7ce67a54e66b92f386fe751b035be8
-SHA256: e8201ae6d84e21fdce57457e6e25bde2e9f66acb0d44477899247bfbd4215026
-SHA512: 3a229e3cb042384c9fb6000e7c48420e05bf49da13f0b82822382daea60ade8d68e29f14137ad001229afe953c6283f95a37d4de8aa8347c0e9fe0cc87c900dc
+Filename: pool/main/tmpltool_1.4.3_arm64.deb
+Size: 1485332
+MD5sum: 1ccc327815a05471bc85d67f9e81048d
+SHA256: 2106abea6099a391deeae28a1662b90d8c16ff6ee0420b12a32c97bb1e68a1c7
+SHA512: fe02a4d1b3d27ed4bfe1b338a4e8c895eb6c8b20900549d79600a51298061426ef46dabdd2cdd28b2d55fd5aa705eca945a64aaf2a6ca88b9e4eee1afe403bef
 Section: utils
 Priority: optional
 Homepage: https://github.com/bordeux/tmpltool
