@@ -2,15 +2,15 @@
   "packages": [
     {
       "name": "tmpltool",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "architecture": "amd64",
-      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.5.0/tmpltool_1.5.0_amd64.deb",
-      "filename": "tmpltool_1.5.0_amd64.deb",
+      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.5.1/tmpltool_1.5.1_amd64.deb",
+      "filename": "tmpltool_1.5.1_amd64.deb",
       "project_repo": "bordeux/tmpltool",
-      "size": 1721072,
-      "sha256": "05b3df7f8bbd3cafaf1b9e9720544cbbe6cc7b19c7cc8b2b10aff1831d07c2b3",
-      "sha512": "45b34bda83ee02478709bbc27e7cda1fd87ab14df1eb2b9f05b8b1ab42a8aecd3c2db10146e99283a62f1166479b5822c5fedcc1131e25d0cce9f7f8ed29ed8c",
-      "md5": "573d7251587fcc7b7c83f2b5fdf37d2c",
+      "size": 1725036,
+      "sha256": "0bcdbaf5528a178be2ad851dc4054b1fedb612547d4ba2be039cc66094264f02",
+      "sha512": "c856cbf0eeeb1f3de1e4c56d4493930f3e7d138cf263d8c9d882fd241c270ab4b3c4b012db8db6522621c1e7192720b7326c927298828c786582f7e5e8dbed48",
+      "md5": "0a280a3f950683ab0212d4315917b8a6",
       "description": "A fast and simple command-line template rendering tool using MiniJinja",
       "maintainer": "Chris Bednarczyk <tmpltool@bordeux.net>",
       "depends": "libc6",
@@ -20,15 +20,15 @@
     },
     {
       "name": "tmpltool",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "architecture": "arm64",
-      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.5.0/tmpltool_1.5.0_arm64.deb",
-      "filename": "tmpltool_1.5.0_arm64.deb",
+      "url": "https://github.com/bordeux/tmpltool/releases/download/v1.5.1/tmpltool_1.5.1_arm64.deb",
+      "filename": "tmpltool_1.5.1_arm64.deb",
       "project_repo": "bordeux/tmpltool",
-      "size": 1491296,
-      "sha256": "9ae9349021f39e02b2317316cfa2058965c427847156ad0288cc6ea3a4c8581d",
-      "sha512": "74663baee30500bbc31577c467f7c8d645e73c8d56c228a0aab42a6eba531b674154a8927b148c70825468925350cb1e7d90c341f98db17e226e33dfa6dd52c8",
-      "md5": "bb8baad85859a735fa64cea276bee800",
+      "size": 1490940,
+      "sha256": "a99e89b16302f21adeb5d4544c717bf0dfe0c9959cca462dc8b2e5dbcf76ba9f",
+      "sha512": "f8a21864c7a76ddfe5ab541b77c6945e41d1e3fa6cb0649a21eda251da4a04d53b687e9ca11e07c38c01d2c0b9b922cae9dcdee7812908fe9a2831ae375fc17f",
+      "md5": "a2adec12fa45549772ea3ff0760e8773",
       "description": "A fast and simple command-line template rendering tool using MiniJinja",
       "maintainer": "Chris Bednarczyk <tmpltool@bordeux.net>",
       "depends": "libc6",
@@ -73,5 +73,5 @@
       "homepage": "https://github.com/bordeux/tmpltool"
     }
   ],
-  "updated": "2026-01-09T23:53:45.635539+00:00"
+  "updated": "2026-01-10T21:47:01.504867+00:00"
 }
